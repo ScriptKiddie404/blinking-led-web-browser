@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
+        integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+    <title>Botones arduino</title>
+</head>
+
+<body>
+    <h1>LED Control</h1>
+    <video src="" id="vid" autoplay></video>
+
+    <iframe name="votar" style="display:none;"></iframe>
+
+    <form id="form-leds" method="POST" target="votar">
+        <button class="btn on" type="submit" name="led" value="1">ON</button>
+        <button class="btn off" type="submit" name="led" value="0">OFF</button>
+    </form>
+
+    <script>
+        navigator.mediaDevices.getUserMedia({
+            video: true
+        }).then(stream => {
+            document.getElementById("vid").srcObject = stream;
+        });
+    </script>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>
