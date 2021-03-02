@@ -17,8 +17,6 @@ parser.on('data', data => {
     console.log(data);
 });
 
-// 
-
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
