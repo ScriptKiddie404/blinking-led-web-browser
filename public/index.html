@@ -15,9 +15,10 @@
     <h1>LED Control</h1>
     <video src="" id="vid" autoplay></video>
 
-    <iframe name="votar" style="display:none;"></iframe>
+    <!-- This hidden frame is to prevent reload page on submit -->
+    <iframe name="tricky-frame" style="display:none;"></iframe>
 
-    <form id="form-leds" method="POST" target="votar">
+    <form id="form-leds" method="POST" target="tricky-frame">
         <button class="btn on" type="submit" name="led" value="1">ON</button>
         <button class="btn off" type="submit" name="led" value="0">OFF</button>
     </form>
