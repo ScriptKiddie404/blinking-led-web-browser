@@ -1,34 +1,74 @@
+// =================================================================================== //
+// ====================== IMPORTS BASE DE DATOS & ROUTERS ============================ //
+// =================================================================================== //
+require('./db/mongoose');
+const LedRouter = require('./routers/ledRouter');
+const Led = require('./models/Led');
+// =================================================================================== //
+
+
+// =================================================================================== //
+// ================================ IMPORTS DEL SERVIDOR ============================= //
+// =================================================================================== //
 const express = require('express');
 const app = express();
 const expressPort = 3000;
+// =================================================================================== //
 
 
-// Serial port comm
+// =================================================================================== //
+// ================================ CARGAR EL MIDDLEWARE ============================= //
+// =================================================================================== //
+app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(LedRouter);
+// =================================================================================== //
 
+// =================================================================================== //
+// ============================ IMPORTS DEL PUERTO SERIAL ============================ //
+// =================================================================================== //
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 const port = new SerialPort('COM3', { baudRate: 9600 });
 const parser = port.pipe(new Readline({ delimiter: '\n' }));
-// Read the port data
+// =================================================================================== //
+
+
+// =================================================================================== //
+// =========================== LECTURA DEL PUERTO SERIAL ============================= //
+// =================================================================================== //
 port.on("open", () => {
     console.log('Serial communication is being started.');
 });
-parser.on('data', data => {
-    console.log(data);
+parser.on('data', async data => {
+    console.log(`Arduino says: ${data}`);
+    const parsedData = Number.parseInt(data);
+    let estado = parsedData === 1 ? 'Encendido' : 'Apagado';
+    console.log(estado);
+    try {
+        const registroLed = new Led({
+            estado
+        });
+        await registroLed.save();
+    } catch (error) {
+        console.log(error);
+    }
 });
+// =================================================================================== //
 
-app.use(express.static('public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.sendFile('public/index.html');
 });
 
 app.post('/', (req, res) => {
-    console.log(req.body);
-    port.write(req.body.led, err => {
-    });
+    port.write(req.body.led);
 });
 
-app.listen(expressPort, () => { console.log("Listening on port 3000") });
+
+// =================================================================================== //
+// =============================== INICIAR EL SERVIDOR =============================== //
+// =================================================================================== //
+app.listen(expressPort, () => { console.log("Listening on port:", expressPort) });
+// =================================================================================== //
